@@ -18,12 +18,13 @@ namespace ModbusSimulator
         protected ModbusSlave SlaveNode;
         private TcpListener _listener;
         private IPAddress _ip;
+        
         private TaskAwaiter modbusNodeTask;
-
-        //private readonly Semaphore _semaphore;
-        public Node(string name, IPAddress ip)
+        
+        public Node(string name, int id, IPAddress ip)
         {
-            //_semaphore = semaphore;
+            Id = id;
+            Name = name;
             _ip = ip;
             _thread = new Thread(Runner) { Name = name };
             _listener = new TcpListener(_ip, 502);
@@ -33,7 +34,16 @@ namespace ModbusSimulator
             _thread.Start();
         }
 
-        public ushort GetCommands(int start) => SlaveNode.DataStore.HoldingRegisters[start];
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+
+        public bool GetCoil(int start) => SlaveNode.DataStore.CoilDiscretes[start];
+        public bool GetDiscreteInput(int start) => SlaveNode.DataStore.InputDiscretes[start];
+        public ushort GetInputRegister(int start) => SlaveNode.DataStore.InputRegisters[start];
+        public ushort GetHoldingRegister(int start) => SlaveNode.DataStore.HoldingRegisters[start];
+        
+        
         private void Runner()
         {
             modbusNodeTask = SlaveNode.ListenAsync().GetAwaiter();

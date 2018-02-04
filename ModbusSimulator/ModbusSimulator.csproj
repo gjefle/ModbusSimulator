@@ -43,6 +43,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -62,6 +63,7 @@
     <Compile Include="ModbusNodes.Designer.cs">
       <DependentUpon>ModbusNodes.cs</DependentUpon>
     </Compile>
+    <Compile Include="models\NodeConfig.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="NodesRunner.cs" />
     <Compile Include="Program.cs" />

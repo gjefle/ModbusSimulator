@@ -9,19 +9,20 @@ namespace ModbusSimulator.models
 {
     public class NodeConfig
     {
-        private double[] _data;
+        private int[] _data;
         [Key]
         public int NodeConfigId { get; set; }
 
         public string Name { get; set; }
-        public byte[] Ip { get; set; }
+
+        public string Ip { get; set; }
 
         public string ActiveRegistersInternal { get; set; }
-        public double[] ActiveRegisters
+        public int[] ActiveRegisters
         {
             get
             {
-                return Array.ConvertAll(ActiveRegistersInternal.Split(';'), Double.Parse);
+                return Array.ConvertAll(ActiveRegistersInternal.Split(';'), int.Parse);
             }
             set
             {
