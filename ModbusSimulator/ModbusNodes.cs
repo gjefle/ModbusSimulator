@@ -51,10 +51,10 @@ namespace ModbusSimulator
         {
             switch (selection)
             {
-                case "0x": return RegisterType.Coil;
-                case "1x": return RegisterType.DiscreteInput;
-                case "3x": return RegisterType.InputRegister;
-                case "4x": return RegisterType.HoldingRegister;
+                case "0x - Coil": return RegisterType.Coil;
+                case "1x - Discrete Input": return RegisterType.DiscreteInput;
+                case "3x - Input Register": return RegisterType.InputRegister;
+                case "4x - Holding Register": return RegisterType.HoldingRegister;
                 default: return RegisterType.Coil;
             }
         }
@@ -62,7 +62,7 @@ namespace ModbusSimulator
         private void AddNodeButton_Click(object sender, EventArgs e)
         {
             var ip = new byte[] { AddNodeIp1, AddNodeIp2, AddNodeIp3, AddNodeIp4 };
-            var registerType = GetRegisterType(comboBoxRegType.SelectedText);
+            var registerType = GetRegisterType(comboBoxRegType.SelectedItem.ToString());
             var registerNumber = Convert.ToInt16(textBoxRegNumber.Text);
             var name = textBoxName.Text;
             NodesRunner.AddNodeSimulation(
@@ -139,10 +139,10 @@ namespace ModbusSimulator
 
         private void maskedTextBox1_TextChanged(object sender, EventArgs e)
         {
-            if (!(listBox1.SelectedItem is Node node) || !(listBox2.SelectedItem is RegisterValue reg)) return;
+            if (!(listBox2.SelectedItem is RegisterValue reg)) return;
             reg.Value = Convert.ToUInt16(maskedTextBox1.Text);
             UpdateRegCheckBox(reg);
-            NodesRunner.UpdateNodeValue(node.Id, reg);
+            NodesRunner.UpdateNodeValue(reg.NodeConfigId, reg.RegisterValueId, reg.Value);
         }
 
         private void checkedListBox1_SelectedValueChanged(object sender, EventArgs e)
@@ -160,7 +160,7 @@ namespace ModbusSimulator
             reg.Value = Convert.ToUInt16(value);
 
             UpdateRegValueText(reg);
-            NodesRunner.UpdateNodeValue(node.Id, reg);
+            NodesRunner.UpdateNodeValue(reg.NodeConfigId, reg.RegisterValueId, reg.Value);
         }
 
         private ushort GetUShortFromBitArray(BitArray bitArray)
@@ -173,6 +173,14 @@ namespace ModbusSimulator
             bitArray.CopyTo(array, 0);
             return Convert.ToUInt16(array[0]);
 
+        }
+
+        // Delete register
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (!(listBox2.SelectedItem is RegisterValue reg)) return;
+            NodesRunner.RemoveNodeRegiser(reg);
+            UpdateRegisterList();
         }
     }
 }

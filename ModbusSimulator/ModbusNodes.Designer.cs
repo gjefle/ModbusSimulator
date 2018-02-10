@@ -73,7 +73,7 @@
             // buttonDeleteNode
             // 
             this.buttonDeleteNode.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonDeleteNode.Location = new System.Drawing.Point(13, 335);
+            this.buttonDeleteNode.Location = new System.Drawing.Point(15, 333);
             this.buttonDeleteNode.Name = "buttonDeleteNode";
             this.buttonDeleteNode.Size = new System.Drawing.Size(106, 28);
             this.buttonDeleteNode.TabIndex = 1;
@@ -156,7 +156,7 @@
             // 
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 16;
-            this.listBox1.Location = new System.Drawing.Point(13, 53);
+            this.listBox1.Location = new System.Drawing.Point(15, 51);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(167, 276);
             this.listBox1.TabIndex = 0;
@@ -184,7 +184,7 @@
             // 
             this.listBox2.FormattingEnabled = true;
             this.listBox2.ItemHeight = 16;
-            this.listBox2.Location = new System.Drawing.Point(203, 49);
+            this.listBox2.Location = new System.Drawing.Point(212, 51);
             this.listBox2.Name = "listBox2";
             this.listBox2.Size = new System.Drawing.Size(160, 276);
             this.listBox2.TabIndex = 2;
@@ -217,7 +217,7 @@
             // 
             // textBoxName
             // 
-            this.textBoxName.Location = new System.Drawing.Point(18, 117);
+            this.textBoxName.Location = new System.Drawing.Point(18, 130);
             this.textBoxName.Name = "textBoxName";
             this.textBoxName.Size = new System.Drawing.Size(100, 22);
             this.textBoxName.TabIndex = 4;
@@ -225,9 +225,10 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(17, 97);
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(17, 109);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(45, 17);
+            this.label12.Size = new System.Drawing.Size(48, 18);
             this.label12.TabIndex = 21;
             this.label12.Text = "Name";
             // 
@@ -275,9 +276,9 @@
             this.groupBox1.Controls.Add(this.listBox2);
             this.groupBox1.Controls.Add(this.listBox1);
             this.groupBox1.Controls.Add(this.buttonDeleteNode);
-            this.groupBox1.Location = new System.Drawing.Point(316, 28);
+            this.groupBox1.Location = new System.Drawing.Point(309, 28);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(533, 378);
+            this.groupBox1.Size = new System.Drawing.Size(540, 378);
             this.groupBox1.TabIndex = 19;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Edit nodes";
@@ -285,7 +286,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(380, 33);
+            this.label10.Location = new System.Drawing.Point(389, 35);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(99, 17);
             this.label10.TabIndex = 23;
@@ -294,7 +295,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(203, 29);
+            this.label9.Location = new System.Drawing.Point(212, 31);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(68, 17);
             this.label9.TabIndex = 22;
@@ -303,7 +304,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(13, 33);
+            this.label8.Location = new System.Drawing.Point(19, 31);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(49, 17);
             this.label8.TabIndex = 6;
@@ -312,16 +313,17 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(203, 331);
+            this.button1.Location = new System.Drawing.Point(212, 333);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(119, 28);
             this.button1.TabIndex = 3;
             this.button1.Text = "Delete Register";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // maskedTextBox1
             // 
-            this.maskedTextBox1.Location = new System.Drawing.Point(379, 339);
+            this.maskedTextBox1.Location = new System.Drawing.Point(388, 341);
             this.maskedTextBox1.Name = "maskedTextBox1";
             this.maskedTextBox1.Size = new System.Drawing.Size(100, 22);
             this.maskedTextBox1.TabIndex = 5;
@@ -349,7 +351,7 @@
             "13",
             "14",
             "15"});
-            this.checkedListBox1.Location = new System.Drawing.Point(380, 53);
+            this.checkedListBox1.Location = new System.Drawing.Point(389, 55);
             this.checkedListBox1.Name = "checkedListBox1";
             this.checkedListBox1.Size = new System.Drawing.Size(99, 272);
             this.checkedListBox1.TabIndex = 4;

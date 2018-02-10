@@ -35,24 +35,34 @@ namespace ModbusSimulator
             }
         }
 
-        public void UpdateNodeValue(int id, RegisterValue reg)
+        public void RemoveNodeRegiser(RegisterValue reg)
+        {
+            var registerValue = _ctx.RegisterValue
+                .FirstOrDefault(n => n.RegisterValueId == reg.RegisterValueId);
+
+            if (registerValue == null) return;
+            // Remove from DB
+            _ctx.RegisterValue.Remove(registerValue);
+            _ctx.SaveChanges();
+
+            // Clear register on node
+            UpdateNodeValue(registerValue.NodeConfigId, registerValue.RegisterValueId, 0);
+
+        }
+
+        public void UpdateNodeValue(int nodeConfigId, int registerId, ushort value)
         {
             var nodeConfig = _ctx.NodeConfig
                 .Include(n => n.ActiveRegisters)
-                .FirstOrDefault(n => n.NodeConfigId == id);
-            var register = nodeConfig?.ActiveRegisters
-                .FirstOrDefault(r => r.RegisterNumber == reg.RegisterNumber && r.RegisterType == reg.RegisterType);
+                .FirstOrDefault(n => n.NodeConfigId == nodeConfigId);
+            var register = nodeConfig?.ActiveRegisters.FirstOrDefault(r => r.RegisterValueId == registerId);
 
             if (register == null) return;
-            register.Value = reg.Value;
+            register.Value = value;
             _ctx.SaveChanges();
             // Update Node
-            var node = Nodes.FirstOrDefault(n => n.Id == id);
+            var node = Nodes.FirstOrDefault(n => n.Id == nodeConfigId);
             node.ActiveRegisters = nodeConfig.ActiveRegisters;
-
-
-
-
         }
         public void AddNodeSimulation(byte[] ipAddress, RegisterType type, int number, string name)
         {
@@ -126,6 +136,7 @@ namespace ModbusSimulator
                 Nodes.Remove(node);
             }
         }
+
 
 
     }
