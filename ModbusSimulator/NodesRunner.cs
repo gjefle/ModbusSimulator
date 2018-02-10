@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -25,39 +26,95 @@ namespace ModbusSimulator
         public void StartNodeSimulation()
         {
             Nodes = new List<Node>();
-            var nodeConfigs = _ctx.NodeConfig.ToList();
+            var nodeConfigs = _ctx.NodeConfig
+                .Include(n => n.ActiveRegisters)
+                .ToList();
             foreach (var nodeConfig in nodeConfigs)
             {
-                Nodes.Add(new Node(nodeConfig.Name, nodeConfig.NodeConfigId, IPAddress.Parse(nodeConfig.Ip)));
+                Nodes.Add(new Node(nodeConfig.NodeConfigId, IPAddress.Parse(nodeConfig.Ip), nodeConfig.ActiveRegisters));
             }
         }
 
+        public void UpdateNodeValue(int id, RegisterValue reg)
+        {
+            var nodeConfig = _ctx.NodeConfig
+                .Include(n => n.ActiveRegisters)
+                .FirstOrDefault(n => n.NodeConfigId == id);
+            var register = nodeConfig?.ActiveRegisters
+                .FirstOrDefault(r => r.RegisterNumber == reg.RegisterNumber && r.RegisterType == reg.RegisterType);
+
+            if (register == null) return;
+            register.Value = reg.Value;
+            _ctx.SaveChanges();
+            // Update Node
+            var node = Nodes.FirstOrDefault(n => n.Id == id);
+            node.ActiveRegisters = nodeConfig.ActiveRegisters;
+
+
+
+
+        }
         public void AddNodeSimulation(byte[] ipAddress, RegisterType type, int number, string name)
         {
-            var nodeConfigs = _ctx.NodeConfig.ToList();
+            var nodeConfigs = _ctx.NodeConfig
+                .Include(n => n.ActiveRegisters)
+                .ToList();
+
             var ip = new IPAddress(ipAddress);
-            var nodeConfig = nodeConfigs.FirstOrDefault(n => n.Ip == ipAddress.ToString());
-            
-            if(nodeConfig == null)
+            var nodeConfig = nodeConfigs.FirstOrDefault(n => n.Ip == new IPAddress(ipAddress).ToString());
+
+            if (nodeConfig == null)
             {
                 nodeConfig = new NodeConfig
                 {
-                    Name = name,
-                    Ip = ip.ToString()
+                    Ip = ip.ToString(),
+                    ActiveRegisters = new List<RegisterValue>()
+                    {
+                        new RegisterValue
+                        {
+                         Name   = $"{name} - {(int)type}x{number}",
+                         RegisterNumber = number,
+                         RegisterType = type,
+                         Value = 0
+                        }
+                    }
                 };
                 _ctx.NodeConfig.Add(nodeConfig);
+                _ctx.SaveChanges();
+                Nodes.Add(new Node(nodeConfig.NodeConfigId, new IPAddress(ipAddress), nodeConfig.ActiveRegisters.ToList()));
             }
-            var registerNumber = (int) type * 10000 + number;
-            // TODO Add register
-            
+            else
+            {
+                var dbReg = nodeConfig.ActiveRegisters
+                    .Any(r => r.RegisterNumber == number && r.RegisterType == type);
+                if (dbReg) { return; }
 
-            _ctx.SaveChanges();
-            Nodes.Add(new Node(nodeConfig.Name, nodeConfig.NodeConfigId, new IPAddress(ipAddress)));
+                var reg = new RegisterValue
+                {
+                    Name = $"{name} - {(int)type}x{number}",
+                    RegisterNumber = number,
+                    RegisterType = type,
+                    Value = 0
+                };
+                var regList = nodeConfig.ActiveRegisters.ToList();
+                regList.Add(reg);
+                nodeConfig.ActiveRegisters = regList;
+                _ctx.SaveChanges();
+
+                // Update node
+                var node = Nodes.FirstOrDefault(n => n.Id == nodeConfig.NodeConfigId);
+                if (node != null)
+                {
+                    node.ActiveRegisters = nodeConfig.ActiveRegisters;
+                }
+            }
         }
 
         public void RemoveNodeSimulation(int id)
         {
-            var nodeConfig = _ctx.NodeConfig.FirstOrDefault(n => n.NodeConfigId == id);
+            var nodeConfig = _ctx.NodeConfig
+                .Include(n => n.ActiveRegisters)
+                .FirstOrDefault(n => n.NodeConfigId == id);
             if (nodeConfig != null)
             {
                 // Remove from db

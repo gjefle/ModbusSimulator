@@ -8,9 +8,9 @@ namespace ModbusSimulator
 {
     public enum RegisterType
     {
-        Coil,
-        DiscreteInput,
-        InputRegister,
-        HoldingRegister
+        Coil = 0,
+        DiscreteInput = 1,
+        InputRegister = 3,
+        HoldingRegister = 4
     }
 }

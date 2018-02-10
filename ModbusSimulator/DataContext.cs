@@ -13,6 +13,8 @@ namespace ModbusSimulator
         public DataContext(string connectionString): base(connectionString) {}
 
         public DbSet<NodeConfig> NodeConfig { get; set; }
+
+        public DbSet<RegisterValue> RegisterValue { get; set; }
         
     }
 }
