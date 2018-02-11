@@ -22,9 +22,13 @@ namespace ModbusSimulator
         
         private TaskAwaiter modbusNodeTask;
         private List<RegisterValue> _activeRegisters;
+        private Task _task;
+        private CancellationTokenSource _nodeToken;
+        private Semaphore _sem;
 
         public Node(int id, IPAddress ip, List<RegisterValue> activeRegisters)
         {
+            _sem = new Semaphore(1,1);
             Id = id;
             _ip = ip;
             Ip = ip.ToString();
@@ -35,6 +39,7 @@ namespace ModbusSimulator
             SlaveNode.DataStore = DataStoreFactory.CreateDefaultDataStore();
             _thread.Start();
             ActiveRegisters = activeRegisters;
+            StartNodeUpdate();
         }
 
         public int Id { get; set; }
@@ -50,9 +55,39 @@ namespace ModbusSimulator
             }
         }
 
+        private void StartNodeUpdate()
+        {
+            _task = Task.Run(async () =>
+            {
+                _nodeToken = new CancellationTokenSource();
+                while (!_nodeToken.IsCancellationRequested)
+                {
+                    var waitTask = Task.Delay(200, _nodeToken.Token);
+                    _sem.WaitOne();
+                    foreach (var activeRegister in ActiveRegisters)
+                    {
+                        switch (activeRegister.RegisterType)
+                        {
+                            case RegisterType.Coil:
+                                activeRegister.Value = Convert.ToUInt16(SlaveNode.DataStore.CoilDiscretes[activeRegister.RegisterNumber]);  break;
+                            case RegisterType.DiscreteInput:
+                                activeRegister.Value = Convert.ToUInt16(SlaveNode.DataStore.InputDiscretes[activeRegister.RegisterNumber]); break;
+                            case RegisterType.InputRegister:
+                                activeRegister.Value = 14; break;
+                            case RegisterType.HoldingRegister:
+                                activeRegister.Value = SlaveNode.DataStore.HoldingRegisters[activeRegister.RegisterNumber]; break;
+                        }
+                    }
+                    _sem.Release();
+                    await waitTask;
+                }
+            });
+        }
+
         public void OnRegisterChanges()
         {
             if (ActiveRegisters == null) return;
+            _sem.WaitOne();
             foreach (var activeRegister in ActiveRegisters)
             {
                 switch (activeRegister.RegisterType)
@@ -67,15 +102,10 @@ namespace ModbusSimulator
                         SlaveNode.DataStore.HoldingRegisters[activeRegister.RegisterNumber] = activeRegister.Value; break;
                 }
             }
+            _sem.Release();
         }
 
         public string Ip { get; set; }
-
-        public bool GetCoil(int start) => SlaveNode.DataStore.CoilDiscretes[start];
-        public bool GetDiscreteInput(int start) => SlaveNode.DataStore.InputDiscretes[start];
-        public ushort GetInputRegister(int start) => SlaveNode.DataStore.InputRegisters[start];
-        public ushort GetHoldingRegister(int start) => SlaveNode.DataStore.HoldingRegisters[start];
-        
         
         private void Runner()
         {

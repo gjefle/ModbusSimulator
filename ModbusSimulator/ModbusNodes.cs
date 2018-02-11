@@ -116,14 +116,15 @@ namespace ModbusSimulator
                 checkedListBox1.SetItemChecked(i, isChecked);
             }
         }
-
-
-
         private void UpdateRegValueText(RegisterValue reg)
         {
             // Update input textbox
-            maskedTextBox1.Text = reg.Value.ToString();
+            maskedTextBox1.DataBindings.Clear();
+            maskedTextBox1.DataBindings.Add(new Binding("Text", reg, nameof(RegisterValue.Value)));
         }
+
+        //private UpdateRegValue(RegisterValue reg)
+        //{}
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {

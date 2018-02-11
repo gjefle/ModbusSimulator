@@ -14,8 +14,7 @@ namespace ModbusSimulator.models
         private int[] _data;
         [Key]
         public int NodeConfigId { get; set; }
-
-
+        
         public string Ip { get; set; }
 
         public List<RegisterValue> ActiveRegisters { get; set; }

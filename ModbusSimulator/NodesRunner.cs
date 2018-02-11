@@ -20,7 +20,6 @@ namespace ModbusSimulator
             var connectionString = ConfigurationManager.ConnectionStrings["DataContext"].ConnectionString;
             _ctx = new DataContext(connectionString);
             StartNodeSimulation();
-
         }
 
         public void StartNodeSimulation()
@@ -82,7 +81,7 @@ namespace ModbusSimulator
                     {
                         new RegisterValue
                         {
-                         Name   = $"{name} - {(int)type}x{number}",
+                         Name   = $"{name} {(int)type} - {number}",
                          RegisterNumber = number,
                          RegisterType = type,
                          Value = 0
@@ -101,7 +100,7 @@ namespace ModbusSimulator
 
                 var reg = new RegisterValue
                 {
-                    Name = $"{name} - {(int)type}x{number}",
+                    Name = $"{name} {(int)type} - {number}",
                     RegisterNumber = number,
                     RegisterType = type,
                     Value = 0
