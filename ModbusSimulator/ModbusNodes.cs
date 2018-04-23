@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ModbusSimulator.models;
@@ -17,10 +18,13 @@ namespace ModbusSimulator
     public partial class ModbusSimulator : Form
     {
         public NodesRunner NodesRunner;
+       
         public byte AddNodeIp1 { get; set; }
         public byte AddNodeIp2 { get; set; }
         public byte AddNodeIp3 { get; set; }
         public byte AddNodeIp4 { get; set; }
+        private System.Windows.Forms.Timer t;
+
 
         public ModbusSimulator()
         {
@@ -30,11 +34,28 @@ namespace ModbusSimulator
             AddNodeIp3 = 1;
             AddNodeIp4 = 2;
             InitializeComponent();
-
+            t = new System.Windows.Forms.Timer();
+            t.Interval = 400;
+            t.Tick += new EventHandler(UpdateValues);
             BindControls();
-
+        
+            t.Start();
         }
 
+        void UpdateValues(object sender, EventArgs e)
+        {
+            if (!(listBox2.SelectedItem is RegisterValue reg)) return;
+            var node = NodesRunner.Nodes.FirstOrDefault(n => n.Id == reg.NodeConfigId);
+            if (node != null)
+            {
+                var regval = node.ActiveRegisters.FirstOrDefault(ar => ar.RegisterValueId == reg.RegisterValueId);
+                reg.Value = regval.Value;
+                if (checkedListBox1 != null && reg.RegisterType == RegisterType.Coil)
+                {
+                    checkedListBox1.SetItemChecked(0, Convert.ToBoolean(reg.Value));
+                }
+            }
+        }
 
         protected void BindControls()
         {
@@ -68,7 +89,7 @@ namespace ModbusSimulator
             NodesRunner.AddNodeSimulation(
                ip,
                registerType,
-               registerNumber, 
+               registerNumber,
                name);
 
             UpdateNodeList();
@@ -151,7 +172,7 @@ namespace ModbusSimulator
             if (!(listBox1.SelectedItem is Node node) || !(listBox2.SelectedItem is RegisterValue reg)) return;
 
             BitArray bitArray = new BitArray(16);
-            
+
             for (int i = 0; i < 16; i++)
             {
                 bitArray[i] = checkedListBox1.GetItemChecked(i);
