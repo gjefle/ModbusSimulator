@@ -75,7 +75,7 @@ namespace ModbusSimulator
                             case RegisterType.InputRegister:
                                 activeRegister.Value = 14; break;
                             case RegisterType.HoldingRegister:
-                                activeRegister.Value = SlaveNode.DataStore.HoldingRegisters[activeRegister.RegisterNumber]; break;
+                                activeRegister.Value = SlaveNode.DataStore.HoldingRegisters[activeRegister.RegisterNumber -1]; break;
                         }
                     }
                     _sem.Release();
